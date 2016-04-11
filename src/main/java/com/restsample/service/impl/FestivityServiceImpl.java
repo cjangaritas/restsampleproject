@@ -25,6 +25,11 @@ public class FestivityServiceImpl implements FestivityService{
     }
 
     @Override
+    public Festivity findOne(String id) {
+        return festivityRepository.findOne(id);
+    }
+
+    @Override
     public Festivity update(Festivity festivity) {
         return festivityRepository.save(festivity);
     }

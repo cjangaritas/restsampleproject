@@ -1,15 +1,20 @@
 package com.restsample.data.model;
 
 
+import cz.jirutka.validator.spring.SpELAssert;
 import org.hibernate.validator.constraints.NotEmpty;
 import org.joda.time.LocalDate;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.io.Serializable;
 
-
+@SpELAssert(value = "startDate.compareTo(endDate) <= 0 ",
+        message = "{validator.startDateMustBeBefore}")
+@Document
 public class Festivity implements Serializable {
 
     @Id
@@ -18,6 +23,7 @@ public class Festivity implements Serializable {
     @NotNull
     @NotEmpty
     @Size(max=255)
+    @Indexed(unique=true)
     private String name;
 
     private LocalDate startDate;

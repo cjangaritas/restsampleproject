@@ -30,25 +30,28 @@ public class FestivityController {
     @RequestMapping(value = "/findAll", method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Gets all the festivities")
-    @ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid Festivity")})
+    @ApiResponses(value = { @ApiResponse(code = 200, message=""), @ApiResponse(code = 400, message = "Invalid Festivity")})
     public ResponseEntity<List<Festivity>> getAll() {
         List<Festivity> festivities = festivityService.findAll();
+        if (festivities == null || festivities.isEmpty()){
+            return new ResponseEntity<>(festivities, HttpStatus.NOT_FOUND);
+        }
         return new ResponseEntity<>(festivities, HttpStatus.OK);
     }
 
-    @RequestMapping( value = "/{id}", method = RequestMethod.GET,
+    @RequestMapping( value = "/{festivityId}", method = RequestMethod.GET,
             produces = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Gets one festivity")
-    @ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid Festivity")})
+    @ApiResponses(value = { @ApiResponse(code = 200, message=""), @ApiResponse(code = 400, message = "Invalid Festivity")})
     public ResponseEntity getFestivity(@PathVariable String festivityId) {
-        return new ResponseEntity<>(new Festivity()/* **** ANSWER A FESTIVITIES OBJECT */, HttpStatus.OK);
+        return new ResponseEntity<>(festivityService.findOne(festivityId), HttpStatus.OK);
     }
 
     @RequestMapping(method = RequestMethod.POST,
             produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Creates one festivity")
-    @ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid Festivity")})
-    public ResponseEntity create(@RequestBody Festivity festivity){
+    @ApiResponses(value = { @ApiResponse(code = 201, message=""), @ApiResponse(code = 400, message = "Invalid Festivity")})
+    public ResponseEntity create(@Valid @RequestBody Festivity festivity){
         Festivity newFestivity = festivityService.create(festivity);
         String id = newFestivity == null ? "" : newFestivity.getId();
         URI uri = URI.create("/festivity/" + id);
@@ -58,9 +61,10 @@ public class FestivityController {
     @RequestMapping(method = RequestMethod.PUT,
             produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ApiOperation(value = "Modifies a festivity")
-    @ApiResponses(value = { @ApiResponse(code = 400, message = "Invalid Festivity")})
-    public ResponseEntity update(@Valid @RequestBody Festivity festivity) { // ********** NAME BETTER ********
-        return new ResponseEntity<>(new Festivity()/* **** ANSWER A FESTIVITIES OBJECT */, HttpStatus.CREATED);
+    @ApiResponses(value = { @ApiResponse(code = 200, message=""), @ApiResponse(code = 400, message = "Invalid Festivity")})
+    public ResponseEntity update(@Valid @RequestBody Festivity festivity) {
+        Festivity newFestivity = festivityService.update(festivity);
+        return new ResponseEntity<>(HttpStatus.OK);
     }
-
 }
+

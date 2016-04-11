@@ -1,7 +1,9 @@
 package com.restsample;
 
+import com.restsample.xml.SimpleXmlMapper;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -17,7 +19,14 @@ import java.util.Locale;
 public class Application {
 
     public static void main(String[] args) throws Exception {
-        SpringApplication.run(Application.class, args);
+        ConfigurableApplicationContext app = SpringApplication.run(Application.class, args);
+        Application.mapXml(app);
+    }
+
+    private static void mapXml(ConfigurableApplicationContext applicationContext) {
+        // XML Initialization
+        SimpleXmlMapper mapper = (SimpleXmlMapper)applicationContext.getBean("simpleXmlMapper");
+        mapper.executeXmlDataImport();
     }
 
     @Bean

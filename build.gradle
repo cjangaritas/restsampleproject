@@ -32,23 +32,23 @@ dependencies {
     // tag::actuator[]
     compile("org.springframework.boot:spring-boot-starter-actuator")
     // end::actuator[]
-    testCompile("junit:junit")
 
     compile("org.springframework.boot:spring-boot-starter-data-rest")
     compile("org.apache.commons:commons-lang3:3.0")
-
-//    compile("com.wordnik:swagger-annotations_2.10:1.3.0")
-
-//    compile("de.flapdoodle.embed:de.flapdoodle.embed.mongo")
     compile("com.mangofactory:swagger-springmvc:0.9.5")
-
     compile("javax.inject:javax.inject:1")
     compile("com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.6.3")
     compile("org.springframework.boot:spring-boot-starter-data-mongodb")
     compile("org.mongodb:mongo-java-driver:3.2.0")
     compile("com.fasterxml.jackson.datatype:jackson-datatype-joda:2.4.0")
+    compile("com.github.fakemongo:fongo:1.3.1")
+    compile("cz.jirutka.validator:validator-spring:1.1.0")
 
-//    compile("org.codehaus.woodstox:woodstox-core-asl:4.4.1")
+    testCompile("junit:junit")
+    testCompile("org.springframework:spring-test")
+    testCompile("com.lordofthejars:nosqlunit-mongodb:0.7.7")
+    testCompile("com.github.fakemongo:fongo:1.3.1")
+    testCompile("org.mockito:mockito-core" )
 
 }
 

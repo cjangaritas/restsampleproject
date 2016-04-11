@@ -13,3 +13,10 @@
 # Available Sample URLs
 - GET http://localhost:8080/festivity/findAll
 - http://localhost:8080/swagger/index.html
+
+# XML files location
+src/main/resources/xml/festivities.xml
+
+# Sample JSON bodies
+POST, Create:
+{"name": "festivityName_NEW","startDate": "2016-01-01","endDate": "2016-01-01","locationName": "Bogota"}

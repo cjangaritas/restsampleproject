@@ -8,5 +8,6 @@ public interface FestivityService {
 
     List<Festivity> findAll();
     Festivity create(Festivity festivity );
+    Festivity findOne(String id);
     Festivity update(Festivity festivity);
 }
