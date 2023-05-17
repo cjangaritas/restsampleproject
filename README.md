@@ -9,6 +9,7 @@
 1. Clone the repository
 2. Access the project folder *e.g. cd restsampleproject*
 3. Execute the startup command *gradle bootRun*
+3.1. Or execute the maven target bootRun mvn spring-boot:run
 
 # Available Sample URLs
 - GET http://localhost:8080/festivity/findAll

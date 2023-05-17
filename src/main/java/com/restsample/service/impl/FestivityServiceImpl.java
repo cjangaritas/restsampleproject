@@ -8,6 +8,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.Optional;
+
 @Service
 @Transactional
 public class FestivityServiceImpl implements FestivityService{
@@ -25,8 +27,8 @@ public class FestivityServiceImpl implements FestivityService{
     }
 
     @Override
-    public Festivity findOne(String id) {
-        return festivityRepository.findOne(id);
+    public Optional<Festivity> findOne(String id) {
+        return festivityRepository.findById(id);
     }
 
     @Override

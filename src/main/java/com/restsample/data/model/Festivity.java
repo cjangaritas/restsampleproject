@@ -2,7 +2,7 @@ package com.restsample.data.model;
 
 
 import cz.jirutka.validator.spring.SpELAssert;
-import org.hibernate.validator.constraints.NotEmpty;
+import javax.validation.constraints.NotEmpty;
 import org.joda.time.LocalDate;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;

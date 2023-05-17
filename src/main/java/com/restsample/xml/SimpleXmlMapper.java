@@ -32,8 +32,7 @@ public class SimpleXmlMapper {
         try {
             xmlMapper.registerModule(new JodaModule());
             festivities = xmlMapper.readValue(
-                    new File("C:\\Users\\Carlos\\IdeaProjects\\TEMP\\restsampleproject\\" +
-                            "src\\main\\resources\\xml\\festivities.xml"),
+                    new File(SimpleXmlMapper.class.getResource("/xml/festivities.xml").getFile()),
                     TypeFactory.defaultInstance().constructCollectionType(LinkedList.class, Festivity.class));
         }catch (IOException e){
             e.printStackTrace();
