@@ -1,0 +1,231 @@
+<div class="dashboard-container">
+  <!-- Header -->
+  <header class="dashboard-header animate-fade-in-up">
+    <div class="brand">
+      <div class="logo-icon">🎉</div>
+      <div>
+        <h1>Festivity Planner</h1>
+        <p style="color: var(--text-secondary); font-size: 0.9rem;">Manage and discover events & celebrations</p>
+      </div>
+    </div>
+    <button class="btn btn-primary" (click)="openCreateDrawer()">
+      <span style="font-size: 1.2rem; font-weight: bold;">+</span> Create Festivity
+    </button>
+  </header>
+
+  <!-- Messages -->
+  @if (successMessage()) {
+    <div class="message message-success animate-fade-in">
+      <span>✅</span>
+      <div>{{ successMessage() }}</div>
+    </div>
+  }
+
+  @if (errorMessage() && !isFormOpen()) {
+    <div class="message message-error animate-fade-in">
+      <span>⚠️</span>
+      <div>{{ errorMessage() }}</div>
+    </div>
+  }
+
+  <!-- Stats Grid -->
+  <section class="stats-grid animate-fade-in-up" style="animation-delay: 0.1s;">
+    <div class="stat-card glass-panel">
+      <div class="stat-label">Total Festivities</div>
+      <div class="stat-value">{{ stats().total }}</div>
+    </div>
+    <div class="stat-card glass-panel ongoing">
+      <div class="stat-label">Ongoing Today</div>
+      <div class="stat-value">{{ stats().ongoing }}</div>
+    </div>
+    <div class="stat-card glass-panel upcoming">
+      <div class="stat-label">Upcoming</div>
+      <div class="stat-value">{{ stats().upcoming }}</div>
+    </div>
+    <div class="stat-card glass-panel completed">
+      <div class="stat-label">Completed</div>
+      <div class="stat-value">{{ stats().completed }}</div>
+    </div>
+  </section>
+
+  <!-- Filters Bar -->
+  <section class="filters-bar glass-panel animate-fade-in-up" style="animation-delay: 0.2s; padding: 16px;">
+    <div class="search-wrapper">
+      <input 
+        type="text" 
+        placeholder="Search by name or location..." 
+        [ngModel]="searchQuery()" 
+        (ngModelChange)="searchQuery.set($event)"
+      />
+    </div>
+    <div class="filter-select">
+      <select [ngModel]="selectedLocation()" (ngModelChange)="selectedLocation.set($event)">
+        <option value="">All Locations</option>
+        @for (loc of uniqueLocations(); track loc) {
+          <option [value]="loc">{{ loc }}</option>
+        }
+      </select>
+    </div>
+    <button class="btn btn-secondary" (click)="loadFestivities()">
+      🔄 Refresh
+    </button>
+  </section>
+
+  <!-- Main Content Area -->
+  @if (isLoading()) {
+    <div class="loading-state animate-fade-in">
+      <div class="spinner"></div>
+      <p style="color: var(--text-secondary);">Retrieving festivities from database...</p>
+    </div>
+  } @else {
+    @if (filteredFestivities().length === 0) {
+      <div class="empty-state glass-panel animate-fade-in">
+        <p style="font-size: 1.2rem; color: var(--text-secondary); margin-bottom: 20px;">
+          No festivities found.
+        </p>
+        <p style="color: var(--text-muted); margin-bottom: 24px;">
+          @if (searchQuery() || selectedLocation()) {
+            Try resetting your search query or location filter.
+          } @else {
+            Start by creating a new festivity to populate the calendar!
+          }
+        </p>
+        @if (searchQuery() || selectedLocation()) {
+          <button class="btn btn-secondary" (click)="searchQuery.set(''); selectedLocation.set('')">
+            Clear Filters
+          </button>
+        } @else {
+          <button class="btn btn-primary" (click)="openCreateDrawer()">
+            + Add First Festivity
+          </button>
+        }
+      </div>
+    } @else {
+      <div class="festivity-grid">
+        @for (festivity of filteredFestivities(); track festivity.id) {
+          <div class="festivity-card glass-panel animate-fade-in-up">
+            <div>
+              <div class="card-header">
+                <h3 class="festivity-name">{{ festivity.name }}</h3>
+                
+                <!-- Status Badge -->
+                @let today = ('' | date:'yyyy-MM-dd') || '';
+                @if (festivity.startDate > today) {
+                  <span class="badge badge-upcoming">Upcoming</span>
+                } @else if (festivity.endDate < today) {
+                  <span class="badge badge-completed">Completed</span>
+                } @else {
+                  <span class="badge badge-ongoing">Ongoing</span>
+                }
+              </div>
+
+              <div class="card-details">
+                <div class="detail-item">
+                  <span>📅</span>
+                  <span>
+                    {{ festivity.startDate | date:'mediumDate' }} 
+                    @if (festivity.startDate !== festivity.endDate) {
+                      - {{ festivity.endDate | date:'mediumDate' }}
+                    }
+                  </span>
+                </div>
+                @if (festivity.locationName) {
+                  <div class="detail-item">
+                    <span>📍</span>
+                    <span>{{ festivity.locationName }}</span>
+                  </div>
+                }
+              </div>
+            </div>
+
+            <div class="card-actions">
+              <button class="btn btn-secondary" style="padding: 8px 16px; font-size: 0.9rem;" (click)="openEditDrawer(festivity)">
+                ✏️ Edit
+              </button>
+            </div>
+          </div>
+        }
+      </div>
+    }
+  }
+</div>
+
+<!-- Drawer Slideout Overlay -->
+@if (isFormOpen()) {
+  <div class="drawer-overlay animate-fade-in" (click)="closeDrawer()"></div>
+}
+
+<!-- Drawer Slideout Panel -->
+<div class="drawer glass-panel" [class.open]="isFormOpen()">
+  <div class="drawer-header">
+    <h2>{{ formMode() === 'create' ? 'Create Festivity' : 'Edit Festivity' }}</h2>
+    <button class="btn-close" (click)="closeDrawer()">&times;</button>
+  </div>
+
+  @if (errorMessage() && isFormOpen()) {
+    <div class="message message-error animate-fade-in">
+      <span>⚠️</span>
+      <div>{{ errorMessage() }}</div>
+    </div>
+  }
+
+  <form (ngSubmit)="saveFestivity()" style="display: flex; flex-direction: column; flex: 1;">
+    <div class="form-group">
+      <label for="name">Festivity Name *</label>
+      <input 
+        id="name" 
+        type="text" 
+        required 
+        placeholder="e.g. New Year Celebration"
+        [ngModel]="formName()" 
+        (ngModelChange)="formName.set($event)"
+        name="name"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="startDate">Start Date *</label>
+      <input 
+        id="startDate" 
+        type="date" 
+        required
+        [ngModel]="formStartDate()" 
+        (ngModelChange)="formStartDate.set($event)"
+        name="startDate"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="endDate">End Date *</label>
+      <input 
+        id="endDate" 
+        type="date" 
+        required
+        [ngModel]="formEndDate()" 
+        (ngModelChange)="formEndDate.set($event)"
+        name="endDate"
+      />
+    </div>
+
+    <div class="form-group">
+      <label for="locationName">Location Name</label>
+      <input 
+        id="locationName" 
+        type="text" 
+        placeholder="e.g. Bogota, Colombia"
+        [ngModel]="formLocationName()" 
+        (ngModelChange)="formLocationName.set($event)"
+        name="locationName"
+      />
+    </div>
+
+    <div class="form-actions">
+      <button type="button" class="btn btn-secondary" style="flex: 1;" (click)="closeDrawer()">
+        Cancel
+      </button>
+      <button type="submit" class="btn btn-primary" style="flex: 1;">
+        Save
+      </button>
+    </div>
+  </form>
+</div>

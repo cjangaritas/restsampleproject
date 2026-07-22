@@ -1,0 +1,22 @@
+# Java/Gradle/Maven compiled outputs
+**/target/
+**/build/
+.gradle/
+*.class
+
+# Node / Frontend dependencies & outputs
+**/node_modules/
+**/dist/
+**/.angular/
+
+# IDE / Editors
+.idea/
+*.iml
+.project
+.classpath
+.settings/
+.vscode/
+
+# OS/System files
+.DS_Store
+Thumbs.db
